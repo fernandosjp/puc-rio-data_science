@@ -22,7 +22,7 @@ def test_basic_predictions(description):
 def test_mode_accuracy():
     # Dataset URL
     url = "https://raw.githubusercontent.com/fernandosjp/puc-rio-data_science/main/test/test_data.csv"
-    data = pd.read_csv('test/test_data.csv', delimiter=',', encoding='latin-1')
+    data = pd.read_csv(url, delimiter=',', encoding='utf-8')
     data['Description'] = data['Description'].values.astype('U')
 
     features = ['Description'] 
