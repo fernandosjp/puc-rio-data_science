@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from utils.transaction_classifier import classify_transaction
+from utils.transaction_classifier import classify_transaction_list
 
 
 ############ PAGE LAYOUT AND TITLE ############
@@ -155,29 +155,13 @@ with MainTab:
 
         ############ CLASSIFY TRANSACTIONS USING ML MODEL ############
 
-        list_for_model_output = []
-
-        for row in linesList:
-            model_output = classify_transaction(row)
-            list_for_model_output.append(model_output)
-            df = pd.DataFrame.from_dict(list_for_model_output)
+        df = classify_transaction_list(linesList)
 
         st.success("✅ Done!")
 
         st.caption("")
         st.markdown("### Check the results!")
         st.caption("")
-
-        ############ DATA FORMATTING AND DISPLAY ############
-        # Various data wrangling to get the data in the right format!
-
-        # # List comprehension to convert the score from decimals to percentages
-        f = [f"{row:.2%}" for row in df["score"]]
-        df["accuracy"] = f
-        df.drop(["score"], inplace=True, axis=1)
-
-        # # We need to change the index. Index starts at 0, so we make it start at 1
-        df.index = np.arange(1, len(df) + 1)
 
         # Display the dataframe
         st.write(df)
