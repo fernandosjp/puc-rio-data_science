@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from streamlit_tags import st_tags
 from utils.transaction_classifier import classify_transaction
 
 
@@ -75,50 +74,36 @@ with MainTab:
 
     with st.form(key="my_form"):
 
-        ############ ST TAGS ############
-
-        labels_from_st_tags = st_tags(
-            value=["Transactional", "Informational", "Navigational"],
-            maxtags=3,
-            suggestions=["Transactional", "Informational", "Navigational"],
-            label="",
-        )
-
         # The block of code below is to display some text samples to classify.
         # This can of course be replaced with your own text samples.
 
         # MAX_KEY_PHRASES is a variable that controls the number of phrases that can be pasted:
         # The default in this app is 50 phrases. This can be changed to any number you like.
 
-        MAX_KEY_PHRASES = 50
-
+        MAX_DESCRIPTIONS = 50
         new_line = "\n"
-
-        pre_defined_keyphrases = [
-            "I want to buy something",
-            "We have a question about a product",
-            "I want a refund through the Google Play store",
-            "Can I have a discount, please",
-            "Can I have the link to the product page?",
+        pre_defined_descriptions = [
+            "Gas",
+            "Market",
+            "McDonald",
+            "Walmart",
+            "Water bottle",
+            "Cheese burger",
+            "Cellphone"
         ]
-
-        # Python list comprehension to create a string from the list of keyphrases.
-        keyphrases_string = f"{new_line.join(map(str, pre_defined_keyphrases))}"
+        sample_descriptions_string = f"{new_line.join(map(str, pre_defined_descriptions))}"
 
         # The block of code below displays a text area
         # So users can paste their phrases to classify
 
         text = st.text_area(
             # Instructions
-            "Enter keyphrases to classify",
-            # 'sample' variable that contains our keyphrases.
-            keyphrases_string,
-            # The height
+            "Enter transactions descriptions to classify",
+            sample_descriptions_string,
             height=200,
-            # The tooltip displayed when the user hovers over the text area.
-            help="At least two keyphrases for the classifier to work, one per line, "
-            + str(MAX_KEY_PHRASES)
-            + " keyphrases max in 'unlocked mode'. You can tweak 'MAX_KEY_PHRASES' in the code to change this",
+            help="At least one transaction for the classifier to work, one per line, "
+            + str(MAX_DESCRIPTIONS)
+            + " transaction descriptions max in 'unlocked mode'.",
             key="1",
         )
 
@@ -135,14 +120,14 @@ with MainTab:
         linesList = list(dict.fromkeys(linesList))  # Removes dupes
         linesList = list(filter(None, linesList))  # Removes empty lines
 
-        if len(linesList) > MAX_KEY_PHRASES:
+        if len(linesList) > MAX_DESCRIPTIONS:
             st.info(
                 f"❄️ Note that only the first "
-                + str(MAX_KEY_PHRASES)
-                + " keyphrases will be reviewed to preserve performance. Fork the repo and tweak 'MAX_KEY_PHRASES' in the code to increase that limit."
+                + str(MAX_DESCRIPTIONS)
+                + " transaction descriptions will be reviewed to preserve performance."
             )
 
-            linesList = linesList[:MAX_KEY_PHRASES]
+            linesList = linesList[:MAX_DESCRIPTIONS]
 
         submit_button = st.form_submit_button(label="Submit")
 
@@ -159,16 +144,6 @@ with MainTab:
         st.session_state.valid_inputs_received = False
         st.stop()
 
-    elif submit_button and not labels_from_st_tags:
-        st.warning("❄️ You have not added any labels, please add some! ")
-        st.session_state.valid_inputs_received = False
-        st.stop()
-
-    elif submit_button and len(labels_from_st_tags) == 1:
-        st.warning("❄️ Please make sure to add at least two labels for classification")
-        st.session_state.valid_inputs_received = False
-        st.stop()
-
     elif submit_button or st.session_state.valid_inputs_received:
 
         if submit_button:
@@ -180,45 +155,12 @@ with MainTab:
 
         ############ CLASSIFY TRANSACTIONS USING ML MODEL ############
 
-        # First, we create a Python function to construct the API call.
+        list_for_model_output = []
 
-        # def query(payload):
-        #     response = requests.post(API_URL, headers=headers, json=payload)
-        #     return response.json()
-
-        # # The function will send an HTTP POST request to the API endpoint.
-        # # This function has one argument: the payload
-        # # The payload is the data we want to send to HugggingFace when we make an API request
-
-        # # We create a list to store the outputs of the API call
-
-        # list_for_api_output = []
-
-        # # We create a 'for loop' that iterates through each keyphrase
-        # # An API call will be made every time, for each keyphrase
-
-        # # The payload is composed of:
-        # #   1. the keyphrase
-        # #   2. the labels
-        # #   3. the 'wait_for_model' parameter set to "True", to avoid timeouts!
-
-        # for row in linesList:
-        #     api_json_output = query(
-        #         {
-        #             "inputs": row,
-        #             "parameters": {"candidate_labels": labels_from_st_tags},
-        #             "options": {"wait_for_model": True},
-        #         }
-        #     )
-
-        #     # Let's have a look at the output of the API call
-        #     # st.write(api_json_output)
-
-        #     # All the results are appended to the empty list we created earlier
-        #     list_for_api_output.append(api_json_output)
-
-        #     # then we'll convert the list to a dataframe
-        #     df = pd.DataFrame.from_dict(list_for_api_output)
+        for row in linesList:
+            model_output = classify_transaction(row)
+            list_for_model_output.append(model_output)
+            df = pd.DataFrame.from_dict(list_for_model_output)
 
         st.success("✅ Done!")
 
@@ -226,39 +168,18 @@ with MainTab:
         st.markdown("### Check the results!")
         st.caption("")
 
-        # st.write(df)
-
         ############ DATA FORMATTING AND DISPLAY ############
         # Various data wrangling to get the data in the right format!
 
         # # List comprehension to convert the score from decimals to percentages
-        # f = [[f"{x:.2%}" for x in row] for row in df["scores"]]
-
-        # # Join the classification scores to the dataframe
-        # df["classification scores"] = f
-
-        # # Rename the column 'sequence' to 'keyphrase'
-        # df.rename(columns={"sequence": "keyphrase"}, inplace=True)
-
-        # # The API returns a list of all labels sorted by score. We only want the top label.
-
-        # # For that, we need to select the first element in the 'labels' and 'classification scores' lists
-        # df["label"] = df["labels"].str[0]
-        # df["accuracy"] = df["classification scores"].str[0]
-
-        # # Drop the columns we don't need
-        # df.drop(["scores", "labels", "classification scores"], inplace=True, axis=1)
-
-        # # st.write(df)
+        f = [f"{row:.2%}" for row in df["score"]]
+        df["accuracy"] = f
+        df.drop(["score"], inplace=True, axis=1)
 
         # # We need to change the index. Index starts at 0, so we make it start at 1
-        # df.index = np.arange(1, len(df) + 1)
+        df.index = np.arange(1, len(df) + 1)
 
         # Display the dataframe
-        df = pd.DataFrame(
-            np.random.randn(3, 3),
-            columns=['transactions', 'labels', 'classification scores']
-            )
         st.write(df)
 
         ############ DOWNLOAD BUTTON ############
@@ -266,8 +187,6 @@ with MainTab:
         cs, c1 = st.columns([2, 2])
         with cs:
 
-            # Cache the conversion to prevent computation on every rerun
-            # @st.experimental_memo
             def convert_df(df):
                 return df.to_csv().encode("utf-8")
 
