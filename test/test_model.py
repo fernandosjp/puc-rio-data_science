@@ -5,7 +5,10 @@ transaction_categories = {
     "Gas": "Utilities",
     "Walmart": "Food",
     "Market": "Food",
-    "McDonald": "Food"
+    "McDonald": "Food",
+    "Water bottle": "Food",
+    "Cheese burger": "Food",
+    "Cellphone": "Electronics"
 }
 
 @pytest.mark.parametrize("description", transaction_categories.keys())
