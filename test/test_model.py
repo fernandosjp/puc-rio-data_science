@@ -6,7 +6,7 @@ import pandas as pd
 transaction_categories = {
     "Gasoline": "Auto",
     "Mall": "Food",
-    "McDonalds": "Food",
+    "McDonalds lunch": "Food",
     "Water bottle": "Food",
     "Cheese burger": "Food",
     "Cellphone game": "Entertainment"
@@ -19,7 +19,7 @@ def test_basic_predictions(description):
 
 
 # test against model performance metric and a bigger test csv
-def test_mode_accuracy():
+def test_model_accuracy_greater_85():
     # Dataset URL
     url = "https://raw.githubusercontent.com/fernandosjp/puc-rio-data_science/main/test/test_data.csv"
     data = pd.read_csv(url, delimiter=',', encoding='utf-8')
@@ -32,4 +32,5 @@ def test_mode_accuracy():
     y = data[target]
     yhat = classify_transaction_list(X.Description.values.tolist())
     accuracy = accuracy_score(yhat.Category.values.tolist(), y.Category.values.tolist())
+    print(f'Accuracy: {accuracy}')
     assert accuracy >= 0.85
