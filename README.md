@@ -10,7 +10,7 @@ streamlit run streamlit_app.py
 ```
 
 ## Model Training
-Model was trained using a Google Colab available in the following link: (Transaction Classifier Notebook)[https://colab.research.google.com/github/fernandosjp/puc-rio-data_science/blob/main/model/model_training_notebook.ipynb]
+Model was trained using a Google Colab available in the following link: [Transaction Classifier Notebook](https://colab.research.google.com/github/fernandosjp/puc-rio-data_science/blob/main/model/model_training_notebook.ipynb)
 
 ## Test
 After updating joblib files in `model/production` folder, run the test to assure its quality. The test will check the categorization of a samll sample of common transactions and alse calculate the accuracy against an unseen test dataset to make sure metric is above 85% which is the threshold defined for minimum model quality.
