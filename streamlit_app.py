@@ -84,12 +84,12 @@ with MainTab:
         new_line = "\n"
         pre_defined_descriptions = [
             "Gas",
-            "Market",
-            "McDonald",
-            "Walmart",
-            "Water bottle",
+            "Apple iphone",
+            "Mickey Water bottle",
             "Cheese burger",
-            "Cellphone"
+            "Cellphone game",
+            "French fries",
+            "Desk"
         ]
         sample_descriptions_string = f"{new_line.join(map(str, pre_defined_descriptions))}"
 
