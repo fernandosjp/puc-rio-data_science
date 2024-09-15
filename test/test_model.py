@@ -5,9 +5,8 @@ import pandas as pd
 
 transaction_categories = {
     "Gasoline": "Auto",
-    "Mall": "Food",
-    "McDonalds lunch": "Food",
-    "Water bottle": "Food",
+    "McDonalds cheeseburger": "Food",
+    "Minnie water bottle": "Baby",
     "Cheese burger": "Food",
     "Cellphone game": "Entertainment"
 }

@@ -2,7 +2,7 @@ import joblib
 import numpy as np
 import pandas as pd
 
-model_version = 'v2'
+model_version = 'v3'
 
 model = joblib.load(open(f'model/production/{model_version}-model.joblib', 'rb'))
 vectorizer = joblib.load(open(f'model/production/{model_version}-vectorizer.joblib', 'rb'))
