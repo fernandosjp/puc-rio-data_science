@@ -3,7 +3,7 @@
 Web app with machine learning model to classify financial transactions into categories. This Machine Learning model will be deployed using Streamlit framework to allow simple and practical way of exposing the Machine Learning model to a web app. 
 
 ## Usage
-Run Streamlit application to test the classification model throught a front-end. 
+Use virtualenv to install requirements and run Streamlit application to test the classification model throught a front-end. 
 
 ```bash
 streamlit run streamlit_app.py
